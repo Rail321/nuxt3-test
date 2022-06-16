@@ -5,7 +5,8 @@
     <div>
       <nuxt-link to="/">Главная</nuxt-link><span>&nbsp;</span><span>&nbsp;</span>
       <nuxt-link to="/test">Тест</nuxt-link><span>&nbsp;</span><span>&nbsp;</span>
-      <nuxt-link to="/test-two">Тест 2</nuxt-link>
+      <nuxt-link to="/test-two">Тест 2</nuxt-link><span>&nbsp;</span><span>&nbsp;</span>
+      <nuxt-link to="/test-three">Тест 3</nuxt-link>
     </div>
 
     <div>
