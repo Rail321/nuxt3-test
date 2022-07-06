@@ -8,7 +8,9 @@
       <nuxt-link to="/test-two">Тест 2</nuxt-link><span>&nbsp;</span><span>&nbsp;</span>
       <nuxt-link to="/test-three">Тест 3</nuxt-link><span>&nbsp;</span><span>&nbsp;</span>
       <nuxt-link to="/test-four">Тест 4</nuxt-link><span>&nbsp;</span><span>&nbsp;</span>
-      <nuxt-link to="/test-five">Тест 5</nuxt-link>
+      <nuxt-link to="/test-five">Тест 5</nuxt-link><span>&nbsp;</span><span>&nbsp;</span>
+      <nuxt-link to="/test-six">Тест 6</nuxt-link><span>&nbsp;</span><span>&nbsp;</span>
+      <nuxt-link to="/test-seven">Тест 7</nuxt-link>
     </div>
 
     <div>
