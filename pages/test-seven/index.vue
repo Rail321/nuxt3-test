@@ -2,117 +2,118 @@
   <div>
     <h1>Тест 7.</h1>
 
-    <div>
-      <input type="number" style="width: 30px; height: 50px; margin: 0 3px;"
-        ref="fieldOne"
-        v-bind:value="modelValue[ 0 ]"
+    <div style="display: flex;">
+      <input
+        v-for="itemIdx of count"
+        v-bind:key="itemIdx"
+        v-bind:ref="`item${ itemIdx }`"
+        v-bind:value="modelValue[ itemIdx - 1 ] && itemProtectionList[ itemIdx - 1 ] ? '*' : modelValue[ itemIdx - 1 ]"
+        v-bind:class="{ 'public': !itemProtectionList[ itemIdx - 1 ] && ( itemIdx - 1 === idx ), 'protected': modelValue[ itemIdx - 1 ] && itemProtectionList[ itemIdx - 1 ] }"
+        v-on:focus="onFocus"
         v-on:input="onInput"
-      >
-      <input type="number" style="width: 30px; height: 50px; margin: 0 3px;"
-        ref="fieldTwo"
-        v-bind:value="modelValue[ 1 ]"
-        v-on:input="onInput"
-      >
-      <input type="number" style="width: 30px; height: 50px; margin: 0 3px;"
-        ref="fieldThree"
-        v-bind:value="modelValue[ 2 ]"
-        v-on:input="onInput"
-      >
-      <input type="number" style="width: 30px; height: 50px; margin: 0 3px;"
-        ref="fieldFour"
-        v-bind:value="modelValue[ 3 ]"
-        v-on:input="onInput"
-      >
-
-      <p>{{ modelValue }}</p>
-      <p>{{ modelValue.join( '' ) }}</p>
+      />
     </div>
+
+    <div>{{ modelValue }}</div>
+    <div>{{ itemProtectionList }}</div>
   </div>
 </template>
 
 <script setup>
+  const count = 4
+
   const instance = getCurrentInstance()
-
-  const fieldOne = ref( null )
-  const fieldTwo = ref( null )
-  const fieldThree = ref( null )
-  const fieldFour = ref( null )
-
+  
   const modelValue = ref( [] )
 
-  const fields = [ fieldOne, fieldTwo, fieldThree, fieldFour ]
+  const idx = ref( modelValue.value.length )
+
+  const item1 = ref( null )
+  const item2 = ref( null )
+  const item3 = ref( null )
+  const item4 = ref( null )
+
+  const itemList = [ item1, item2, item3, item4 ]
+
+  const itemProtectionList = ref( itemList.map( () => false ) )
+
+  const next = () => idx.value = ( idx.value + 1 ) >= count ? count - 1 : idx.value + 1
+  const prev = () => idx.value = idx.value <= 0 ? 0 : idx.value - 1
+
+  const reFocus = () => {
+    const targetInput = itemList[ idx.value ].value[ 0 ]
+    targetInput.focus()
+    targetInput.select()
+  }
+
+  const isCorrectInput = value => value !== ' ' && !isNaN( value )
+
+  const onFocus = event => {
+    reFocus()
+  }
 
   const onInput = event => {
     const type = event.inputType
-    const data = event.data
+    const value = event.data
+    const targetIdx = itemList.findIndex( item => item.value[ 0 ] === event.target )
 
     if ( type === 'insertText' ) {
-      if ( !isNaN( +data ) ) {
-        if ( modelValue.value.length !== 4 ) {
-          modelValue.value.push( data )
-          modelValue.value = modelValue.value.slice( 0, 4 )
-        } else {
-          modelValue.value[ 3 ] = data
-        }
+      if ( isCorrectInput( value ) ) {
+        modelValue.value[ targetIdx ] = value
+        itemProtectionList.value[ targetIdx ] = false
+        setTimeout( () => itemProtectionList.value[ targetIdx ] = true, 1000 )
+        next()
       }
     }
-
+    
     if ( type === 'deleteContentBackward' ) {
-      modelValue.value.length = modelValue.value.length - 1
+      modelValue.value.pop()
+      itemProtectionList.value[ targetIdx ] = false
+      prev()
     }
 
-    const idx = modelValue.value.length - 1
-    fields[ idx >= 0 ? idx : 0 ].value.focus()
-    fields[ idx >= 0 ? idx : 0 ].value.select()
-
+    reFocus()
     instance.ctx.$forceUpdate()
   }
 </script>
 
 <style scoped>
   input {
-    text-align: center;
-  }
+    outline: none;
+    border: none;
 
-  input, input::placeholder {
+    margin-left: 4px;
+    margin-right: 4px;
+
+    width: 40px;
+    height: 60px;
+
+    background-color: #EDEEEF;
+    border-radius: 2px;
+
+    text-align: center;
+
     font-family: 'Gilroy';
     font-style: normal;
+    
     font-weight: 300;
     font-size: 38px;
     line-height: 44px;
     color: #414042;
   }
 
-  input {
+  input::selection {
+    background-color: transparent;
+  }
+
+  input.public {
+    background-color: #1EAEED;
+
     font-weight: 500;
     font-size: 24px;
-    line-height: 44px;
-    color: #FFFFFF;
-    color: #414042;
+    line-height: 28px;
+    color: #FFF;
   }
 
-  input::placeholder {
-    font-weight: 300;
-    font-size: 38px;
-    line-height: 44px;
-    color: #414042;
-  }
-
-  input::-webkit-outer-spin-button,
-  input::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-  }
-
-  input[type=number] {
-    -moz-appearance: textfield;
-  }
-
-  input::selection{
-    background-color: transparent;
-  }
-
-  input::-moz-selection{
-    background-color: transparent;
-  }
+  input.protected {}
 </style>
