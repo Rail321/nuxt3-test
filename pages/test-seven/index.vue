@@ -7,15 +7,13 @@
         v-for="itemIdx of count"
         v-bind:key="itemIdx"
         v-bind:ref="`item${ itemIdx }`"
-        v-bind:value="modelValue[ itemIdx - 1 ] && itemProtectionList[ itemIdx - 1 ] ? '*' : modelValue[ itemIdx - 1 ]"
-        v-bind:class="{ 'public': !itemProtectionList[ itemIdx - 1 ] && ( itemIdx - 1 === idx ), 'protected': modelValue[ itemIdx - 1 ] && itemProtectionList[ itemIdx - 1 ] }"
+        v-bind:value="modelValue[ itemIdx - 1 ] && itemProtectionList[ itemIdx - 1 ] ? '&lowast;' : modelValue[ itemIdx - 1 ]"
+        v-bind:class="{ 'public': !itemProtectionList[ itemIdx - 1 ] && modelValue[ itemIdx - 1 ], 'protected': modelValue[ itemIdx - 1 ] && itemProtectionList[ itemIdx - 1 ] }"
         v-on:focus="onFocus"
         v-on:input="onInput"
+        v-on:keydown="onKewDown"
       />
     </div>
-
-    <div>{{ modelValue }}</div>
-    <div>{{ itemProtectionList }}</div>
   </div>
 </template>
 
@@ -48,7 +46,7 @@
 
   const isCorrectInput = value => value !== ' ' && !isNaN( value )
 
-  const onFocus = event => {
+  const onFocus = () => {
     reFocus()
   }
 
@@ -61,7 +59,7 @@
       if ( isCorrectInput( value ) ) {
         modelValue.value[ targetIdx ] = value
         itemProtectionList.value[ targetIdx ] = false
-        setTimeout( () => itemProtectionList.value[ targetIdx ] = true, 1000 )
+        setTimeout( () => itemProtectionList.value[ targetIdx ] = true, 350 )
         next()
       }
     }
@@ -74,6 +72,10 @@
 
     reFocus()
     instance.ctx.$forceUpdate()
+  }
+
+  const onKewDown = event => {
+    if ( [ 37, 38, 39, 40 ].includes( event.keyCode ) ) event.preventDefault()
   }
 </script>
 
@@ -97,9 +99,11 @@
     font-style: normal;
     
     font-weight: 300;
-    font-size: 38px;
+    font-size: 30px;
     line-height: 44px;
     color: #414042;
+
+    caret-color: transparent;
   }
 
   input::selection {
