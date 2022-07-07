@@ -3,32 +3,29 @@
     <h1>Тест 7.</h1>
 
     <div>
-      <input type="number" placeholder="*" style="width: 30px; height: 50px; margin: 0 3px;"
+      <input type="number" style="width: 30px; height: 50px; margin: 0 3px;"
         ref="fieldOne"
-        v-on:focus="onFocus"
         v-bind:value="modelValue[ 0 ]"
         v-on:input="onInput"
       >
-      <input type="number" placeholder="*" style="width: 30px; height: 50px; margin: 0 3px;"
+      <input type="number" style="width: 30px; height: 50px; margin: 0 3px;"
         ref="fieldTwo"
-        v-on:focus="onFocus"
         v-bind:value="modelValue[ 1 ]"
         v-on:input="onInput"
       >
-      <input type="number" placeholder="*" style="width: 30px; height: 50px; margin: 0 3px;"
+      <input type="number" style="width: 30px; height: 50px; margin: 0 3px;"
         ref="fieldThree"
-        v-on:focus="onFocus"
         v-bind:value="modelValue[ 2 ]"
         v-on:input="onInput"
       >
-      <input type="number" placeholder="*" style="width: 30px; height: 50px; margin: 0 3px;"
+      <input type="number" style="width: 30px; height: 50px; margin: 0 3px;"
         ref="fieldFour"
-        v-on:focus="onFocus"
         v-bind:value="modelValue[ 3 ]"
         v-on:input="onInput"
       >
 
       <p>{{ modelValue }}</p>
+      <p>{{ modelValue.join( '' ) }}</p>
     </div>
   </div>
 </template>
@@ -45,21 +42,18 @@
 
   const fields = [ fieldOne, fieldTwo, fieldThree, fieldFour ]
 
-  const onFocus = () => {}
-
   const onInput = event => {
     const type = event.inputType
-    const value = event.target.value
-
-    console.log( type )
-    console.log( event.data )
+    const data = event.data
 
     if ( type === 'insertText' ) {
-      if ( modelValue.value.length !== 4 ) {
-        modelValue.value.push( event.data )
-        modelValue.value = modelValue.value.slice( 0, 4 )
-      } else {
-        modelValue.value[ 3 ] = event.data
+      if ( !isNaN( +data ) ) {
+        if ( modelValue.value.length !== 4 ) {
+          modelValue.value.push( data )
+          modelValue.value = modelValue.value.slice( 0, 4 )
+        } else {
+          modelValue.value[ 3 ] = data
+        }
       }
     }
 
@@ -69,6 +63,7 @@
 
     const idx = modelValue.value.length - 1
     fields[ idx >= 0 ? idx : 0 ].value.focus()
+    fields[ idx >= 0 ? idx : 0 ].value.select()
 
     instance.ctx.$forceUpdate()
   }
@@ -111,5 +106,13 @@
 
   input[type=number] {
     -moz-appearance: textfield;
+  }
+
+  input::selection{
+    background-color: transparent;
+  }
+
+  input::-moz-selection{
+    background-color: transparent;
   }
 </style>
